@@ -72,13 +72,18 @@ def main():
         plot_walls(walls)
         plot_obstacles(obstacles)
         plot_knives(knives)
+
+        for h in range(len(humans)):
+            humans[h].find(knives,walls)
+
         plot_humans(humans,limits,walls,obstacles)
+
         plt.title("1000,1000 map")
         plt.ylabel("y")
         plt.xlabel("x")
         plt.xlim(-1,limits[1])
         plt.ylim(-1,limits[0])
-        plt.pause(0.5)
+        plt.pause(0.05)
         plt.clf()
 
 if __name__ == "__main__":
