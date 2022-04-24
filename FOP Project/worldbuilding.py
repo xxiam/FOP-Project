@@ -2,9 +2,8 @@
 worldbuilding.py - world building for humans and ghosts
 '''
 import random
-from tracemalloc import start
 
-class World():
+class World(): #finished
     
     def create_obstacles(num,limit):
         '''
