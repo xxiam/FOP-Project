@@ -14,11 +14,10 @@ cannot travel through walls and move slower than ghosts,
 import random
 import math
 
-worldLimits = (100,1000)
 
 class Human():
 
-    def __init__(self, name):
+    def __init__(self, name, worldLimits):
         self.name = name
         self.y = random.randint(0, worldLimits[1] - 1)
         self.x = random.randint(0, worldLimits[0] - 1)
@@ -92,6 +91,6 @@ class Human():
 
         walls - humans still have to avoid walls
         '''
-        pass
+        self.speed = 2
 
     
