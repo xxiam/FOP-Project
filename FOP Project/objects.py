@@ -25,51 +25,63 @@ class Human():
         self.dead = False
         self.felloff = False
         self.speed = 1
+        self.prevPos = (self.x,self.y)
 
-    def find(self, item, walls):
+    def find(self, item, walls, obstacles):
         '''
         finds the knife
         item - the location of the knives
         walls - humans cannot walk through walls like ghosts, so they have to walk around it 
         '''
+        blockedPos = walls
+        for i in obstacles:
+            blockedPos.append(i)
+        itemPos = item
 
         if self.felloff == True or self.dead == True:
             self.x = -10
             self.y = -10
 
         else:
-            #how to do object avoidance (use same as practest 3 code)
-            #if human is within 1 units near a wall
-            
-            #finding the closest knife relative to human location
-            itemPos = item #[(x,y),(x,y)...]
+            #finds the nearest item
             relativeDiff = []
-            for x,y in item: #find x,y difference between human and item
+            hypDiff = []
+            for x,y in itemPos:
                 xdiff = self.x - x
                 ydiff = self.y - y
-                if xdiff > 0:
+                if xdiff < 0:
                     xdiff = xdiff * -1
-                if ydiff > 0:
+                if ydiff < 0:
                     ydiff = ydiff * -1
-                relativeDiff.append((xdiff,ydiff)) #[(x,y),(x,y)...]
+                relativeDiff.append((xdiff,ydiff))
 
-            #finding closest item using pythagoras theorem
-            h = []
-            for i in range(len(relativeDiff)):
-                hypotheuse = math.sqrt(relativeDiff[i][0] ** 2 + relativeDiff[i][1] ** 2)
-                h.append(hypotheuse)
+            for x,y in relativeDiff:
+                hypothenuse = math.sqrt(x ** 2 + y ** 2)
+                hypDiff.append(hypothenuse)
 
-            closestItem = itemPos[h.index(min(h))] #tuple
+            closestItem = itemPos[hypDiff.index(min(hypDiff))]
 
             if self.x > closestItem[0]:
                 self.x -= 1
+            if self.x < closestItem[0]:
+                self.x += 1
             if self.y > closestItem[1]:
                 self.y -= 1
-            if self.x < closestItem[0]:
-                self.x += 1 
             if self.y < closestItem[1]:
                 self.y += 1
-            #still need to do object avoidance
+            #object avoidance
+            if self.prevPos[0] > self.x:
+                xMove = -1
+            if self.prevPos[0] < self.x:
+                xMove = 1
+            if self.prevPos[1] > self.y:
+                yMove = -1
+            if self.prevPos[1] < self.y:
+                yMove = 1
+            if self.prevPos[0] == self.x:
+                xMove = 0
+            if self.prevPos[1] == self.y:
+                yMove = 0
 
     def hunt(self, ghosts, walls):
         '''
@@ -82,22 +94,4 @@ class Human():
         '''
         pass
 
-    def runmid(self): #movement test
-        
-        if self.felloff == True or self.dead == True:
-            self.y = -10
-            self.x = -10
-
-        else:
-            if self.x > 500:
-                self.x -= self.speed
-
-            if self.y > 500:
-                self.y -= self.speed
-
-            if self.x < 500:
-                self.x += self.speed
-            
-            if self.y < 500:
-                self.y += self.speed
-            
+    

@@ -74,7 +74,7 @@ def main():
         plot_knives(knives)
 
         for h in range(len(humans)):
-            humans[h].find(knives,walls)
+            humans[h].find(knives,walls,obstacles)
 
         plot_humans(humans,limits,walls,obstacles)
 
