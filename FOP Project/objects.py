@@ -61,13 +61,13 @@ class Human():
             closestItem = itemPos[hypDiff.index(min(hypDiff))]
 
             if self.x > closestItem[0]:
-                self.x -= 1
+                self.x -= self.speed
             if self.x < closestItem[0]:
-                self.x += 1
+                self.x += self.speed
             if self.y > closestItem[1]:
-                self.y -= 1
+                self.y -= self.speed
             if self.y < closestItem[1]:
-                self.y += 1
+                self.y += self.speed
             #object avoidance
             if self.prevPos[0] > self.x:
                 xMove = -1
@@ -81,6 +81,8 @@ class Human():
                 xMove = 0
             if self.prevPos[1] == self.y:
                 yMove = 0
+
+                
 
     def hunt(self, ghosts, walls):
         '''
