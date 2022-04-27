@@ -33,6 +33,13 @@ class Human():
         walls - humans cannot walk through walls like ghosts, so they have to walk around it 
         '''
         itemPos = item
+        wallDetails = []
+        wallPos = []
+
+        for k,v in walls.items():
+            wallDetails.append(k)
+            for _ in v:
+                wallPos.append(_)
 
         if self.felloff == True or self.dead == True:
             self.x = -10
@@ -79,7 +86,24 @@ class Human():
             if self.prevPos[1] == self.y:
                 yMove = 0
 
-                
+            visionRange = 10
+            direction = (xMove,yMove) #-1 = moving -x/y, 1 = moving +x/y
+
+            xVision = self.x
+            yVision = self.y
+
+            for v in range(visionRange):
+                if direction[0] == 1:
+                    xVision += 1
+                if direction[0] == -1:
+                    xVision -= 1
+                if direction[1] == 1:
+                    yVision += 1
+                if direction[1] == -1:
+                    yVision -= 1
+                vision = (xVision,yVision)
+                if vision in wallPos:
+                    print(f"{self.name} is facing a wall at {vision}")
 
     def hunt(self, ghosts, walls):
         '''
@@ -91,5 +115,3 @@ class Human():
         walls - humans still have to avoid walls
         '''
         self.speed = 2
-
-    
