@@ -26,15 +26,12 @@ class Human():
         self.speed = 1
         self.prevPos = (self.x,self.y)
 
-    def find(self, item, walls, obstacles):
+    def find(self, item, walls):
         '''
         finds the knife
         item - the location of the knives
         walls - humans cannot walk through walls like ghosts, so they have to walk around it 
         '''
-        blockedPos = walls
-        for i in obstacles:
-            blockedPos.append(i)
         itemPos = item
 
         if self.felloff == True or self.dead == True:

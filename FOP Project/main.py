@@ -4,25 +4,19 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
-limits = (500,500) #height, length of map (y,x)
+limits = (500,500) #height, length of map (x,y)
 
 def plot_walls(walls):
     xlist = []
     ylist = []
+    wallDetails = []
+    for k,v in walls.items():
+        for x,y in v:
+            xlist.append(x)
+            ylist.append(y)
+        wallDetails.append(k)
 
-    for x,y in walls:
-        xlist.append(x)
-        ylist.append(limits[0] - y - 1)
     plt.scatter(xlist,ylist,c="black",marker="s",s=10)
-
-def plot_obstacles(obstacles):
-    X = []
-    Y = []
-
-    for x,y in obstacles:
-        X.append(x)
-        Y.append(limits[0] - y - 1)
-    plt.scatter(X,Y,c="black",s=10)
 
 def plot_knives(knives):
     X = []
@@ -33,7 +27,7 @@ def plot_knives(knives):
         Y.append(limits[0] - y - 1)
     plt.scatter(X,Y,c="green",s=40)
 
-def plot_humans(humans,limit,walls,obstacles):
+def plot_humans(humans,limit,walls):
     xlist = []
     ylist = []
     slist = [40]
@@ -42,8 +36,6 @@ def plot_humans(humans,limit,walls,obstacles):
 
     for w in walls:
         blocks.append(w)
-    for o in obstacles:
-        blocks.append(o)
 
     for h in range(len(humans)):
         ylist.append(limit[0] - humans[h].y - 1)
@@ -59,9 +51,8 @@ def plot_humans(humans,limit,walls,obstacles):
 
 def main():
     names = ["jhon","nic","dylan","jayden","christian"]
-    obstacles = World.create_obstacles(num=100,limit=limits)
     walls = World.create_wall(num=200,max=50,limit=limits)
-    knives = World.create_knives(num=5,limit=limits,obstacles=obstacles,walls=walls)
+    knives = World.create_knives(num=5,limit=limits,walls=walls)
     humans = []
 
     for n in range(len(names)):
@@ -70,13 +61,12 @@ def main():
     while True:
         
         plot_walls(walls)
-        plot_obstacles(obstacles)
         plot_knives(knives)
 
         for h in range(len(humans)):
-            humans[h].find(knives,walls,obstacles)
+            humans[h].find(knives,walls)
 
-        plot_humans(humans,limits,walls,obstacles)
+        plot_humans(humans,limits,walls)
 
         plt.title(f"{limits[0]} , {limits[1]} map")
         plt.ylabel("y")
