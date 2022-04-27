@@ -14,7 +14,6 @@ cannot travel through walls and move slower than ghosts,
 import random
 import math
 
-
 class Human():
 
     def __init__(self, name, worldLimits):
@@ -25,6 +24,7 @@ class Human():
         self.felloff = False
         self.speed = 1
         self.prevPos = (self.x,self.y)
+        self.avoiding = False
 
     def find(self, item, walls):
         '''
@@ -37,6 +37,8 @@ class Human():
         wallPos = []
 
         for k,v in walls.items():
+            wallEnd = walls[k].pop(1)
+            v.append(wallEnd)
             wallDetails.append(k)
             for _ in v:
                 wallPos.append(_)
@@ -63,15 +65,15 @@ class Human():
                 hypDiff.append(hypothenuse)
 
             closestItem = itemPos[hypDiff.index(min(hypDiff))]
-
-            if self.x > closestItem[0]:
-                self.x -= self.speed
-            if self.x < closestItem[0]:
-                self.x += self.speed
-            if self.y > closestItem[1]:
-                self.y -= self.speed
-            if self.y < closestItem[1]:
-                self.y += self.speed
+            if self.avoiding == False:
+                if self.x > closestItem[0]:
+                    self.x -= self.speed
+                if self.x < closestItem[0]:
+                    self.x += self.speed
+                if self.y > closestItem[1]:
+                    self.y -= self.speed
+                if self.y < closestItem[1]:
+                    self.y += self.speed
             #object avoidance
             if self.prevPos[0] > self.x:
                 xMove = -1
@@ -102,9 +104,26 @@ class Human():
                 if direction[1] == -1:
                     yVision -= 1
                 vision = (xVision,yVision)
+                 
                 if vision in wallPos:
-                    print(f"{self.name} is facing a wall at {vision}")
+                    self.avoiding = True
+                    #find which wall the human is facing and the orientation
+                    facingWall = wallDetails[wallPos.index(vision)]
+                    #facingWall = (orientation, wallNumber)
+                    wallList = wallPos[facingWall[1]]
 
+                    if wallList.index(vision) > len(wallList): #second half
+                        wallEdge = wallList[-1]
+                    if wallList.index(vision) < len(wallList): #first half
+                        wallEdge = wallList[0]
+
+            if self.avoiding == True:
+                pass        
+                #wallEdge is a tuple of the edge of the wall
+                #create movement system to move to the edge of the wall
+                #once finished, return to normal find method
+                    #move to wallEdge
+                    
     def hunt(self, ghosts, walls):
         '''
         once the knife has been found, the humans can now hunt the ghosts, 
@@ -115,3 +134,15 @@ class Human():
         walls - humans still have to avoid walls
         '''
         self.speed = 2
+
+class Ghost():
+    
+    def __init__(self,worldLimits):
+        self.y = random.randint(0,worldLimits[1] -1 )
+        self.x = random.randint(0,worldLimits[0])
+        self.dead = False
+        self.felloff = False
+        self.speed = 2
+        self.prevPos = (self.x,self.y)
+
+    
