@@ -107,19 +107,40 @@ class Human():
                  
                 if vision in wallPos:
                     self.avoiding = True
-                    #find which wall the human is facing and the orientation
-                    facingWall = wallDetails[wallPos.index(vision)]
-                    #facingWall = (orientation, wallNumber)
-                    wallList = wallPos[facingWall[1]]
+                    #find which wall the human is facing
+                    for k,v in walls.items():
+                        if vision in v:
+                            wallNumber = k[1]
+                            facingWall = v
+                            wallOrientation = k[0]
 
-                    if wallList.index(vision) > len(wallList): #second half
-                        wallEdge = wallList[-1]
-                    if wallList.index(vision) < len(wallList): #first half
-                        wallEdge = wallList[0]
-
+                    if facingWall.index(vision) > len(facingWall)/2: #second half of wall
+                        wallEdge = facingWall[-1]
+                        if wallOrientation == 0: #if wall is horizontal and second half
+                            wallEdge = (wallEdge[0] + 1,wallEdge[1])
+                        if wallOrientation == 1: #upper half if vertical
+                            wallEdge = (wallEdge[0],wallEdge[1] + 1)
+                    if facingWall.index(vision) < len(facingWall)/2: #first half of wall
+                        wallEdge = facingWall[0]
+                        if wallOrientation == 0:
+                            wallEdge = (wallEdge[0] - 1,wallEdge[1])
+                        if wallOrientation == 1:
+                            wallEdge = (wallEdge[0],wallEdge[1] - 1)
+            '''
+            error: wallEdge refrenced before assignment, fix that
+            '''
             if self.avoiding == True:
-                pass        
-                #wallEdge is a tuple of the edge of the wall
+                if self.x > wallEdge[0]:
+                    self.x -= self.speed
+                if self.x < wallEdge[0]:
+                    self.x += self.speed
+                if self.y > wallEdge[1]:
+                    self.y -= self.speed
+                if self.y < wallEdge[1]:
+                    self.y += self.speed
+
+                if self.x == wallEdge[0] and self.y == wallEdge[1]:
+                    self.avoiding = False
                 #create movement system to move to the edge of the wall
                 #once finished, return to normal find method
                     #move to wallEdge
@@ -139,10 +160,14 @@ class Ghost():
     
     def __init__(self,worldLimits):
         self.y = random.randint(0,worldLimits[1] -1 )
-        self.x = random.randint(0,worldLimits[0])
+        self.x = random.randint(0,worldLimits[0] -1 )
         self.dead = False
         self.felloff = False
         self.speed = 2
         self.prevPos = (self.x,self.y)
 
-    
+class Movement():
+
+    def __init__(self,speed,limits):
+        self.speed = speed
+        self.limits = limits
