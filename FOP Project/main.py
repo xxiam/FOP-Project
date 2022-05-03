@@ -4,7 +4,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
-limits = (500,500) #height, length of map (x,y)
+limits = (50,50) #height, length of map (x,y)
 
 def plot_walls(walls):
     xlist = []
@@ -51,7 +51,7 @@ def plot_humans(humans,limit,walls):
 
 def main():
     names = ["jhon","nic","dylan","jayden","christian"]
-    walls = World.create_wall(num=200,max=50,limit=limits)
+    walls = World.create_wall(num=int(limits[0]*0.5),max=int(limits[0]*0.5),limit=limits)
     knives = World.create_knives(num=5,limit=limits,walls=walls)
     humans = []
 
@@ -64,7 +64,7 @@ def main():
         plot_knives(knives)
 
         for h in range(len(humans)):
-            humans[h].find(knives,walls)
+            Movement.find(humans[h],knives,walls)
 
         plot_humans(humans,limits,walls)
 
