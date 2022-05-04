@@ -104,6 +104,9 @@ class Movement():
                                         waypoint = (v[-1][0] +1, v[-1][1] + 1)
                                     if self.x < v[-1][0]:
                                         waypoint = (v[-1][0] -1, v[-1][1] + 1)
+                                if wallOrientation == 1:
+                                    if self.y > v[-1][0]:
+                                        pass
                                 wallEdge = v[-1]
 
                             if v.index(vision) < len(v)/2: #lower half/left side
@@ -115,7 +118,9 @@ class Movement():
                                 wallEdge = v[0]
                 else:
                     pass                    
-                   
+
+            if (self.x,self.y) in itemPos:
+                itemPos.remove((self.x,self.y))   
 
         if self.avoiding == False:
             if self.x > closest_item[0]:

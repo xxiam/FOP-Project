@@ -1,5 +1,6 @@
 from objects import *
 from worldbuilding import *
+import movement
 import random
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,7 +17,7 @@ def plot_walls(walls):
             ylist.append(y)
         wallDetails.append(k)
 
-    plt.scatter(xlist,ylist,c="black",marker="s",s=10)
+    plt.scatter (xlist,ylist,c="black",marker="s",s=10)
 
 def plot_knives(knives):
     X = []
@@ -64,7 +65,7 @@ def main():
         plot_knives(knives)
 
         for h in range(len(humans)):
-            Movement.find(humans[h],knives,walls)
+            movement.MovementV2.find(humans[h],knives,walls,limits)
 
         plot_humans(humans,limits,walls)
 
