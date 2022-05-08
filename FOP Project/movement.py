@@ -1,5 +1,5 @@
 from math import hypot
-
+import matplotlib.pyplot as plt
 
 class MovementV2():
 
@@ -7,12 +7,12 @@ class MovementV2():
         #updating self.prevPos
         self.prevPos = (self.x,self.y)
 
-        #wall avoidance code using waypoints
+        wallPos = []
         for k,v in wallDict.items():
-            if (self.x,self.y) in v:
-                print('inside a wall!')
-                self.x,self.y = 0,0
-                self.dead = True
+            wallPos.append(v)
+        #wall avoidance code using waypoints
+        for _ in range(5):
+            pass
         #item finding code using waypoints
         hyp = []
 

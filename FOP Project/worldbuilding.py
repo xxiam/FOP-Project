@@ -3,42 +3,34 @@ worldbuilding.py - world building for humans and ghosts
 '''
 import random
 
-class World(): #finished
-    
+class World(): 
+
     def create_wall(num,max,limit):
         '''
         randomly creates <num> walls of <random length> units length at a random place
         max - maximum length of wall
         limit - world borders
+        when rewriting, make sure to format it in {(orientation,number) : [(walstart),...(wallend)]}
         '''
-        wall = {}
-
-        for w in range(num):
+        walls = {}
+        for n in range(num):
+            start = (random.randint(1,limit[0]),random.randint(1,limit[1]))
+            orientation = random.randint(0,1)
             length = random.randint(1,max)
-            orientation = random.randint(0,1) #0 = horizontal, 1 = vertical
-
-            wallStart = (random.randint(1,limit[0]),random.randint(1,limit[1]))
-            if orientation == 0: #horizontal wall
-                wallEnd = (wallStart[0] + length, wallStart[1])
-            if orientation == 1:
-                wallEnd = (wallStart[0], wallStart[1] + length)
             
-            wall[(orientation,w)] = [(wallStart),(wallEnd)]
-        
-        for k,v in wall.items():
-            startX = v[0][0]
-            startY = v[0][1]
-            endX = v[1][0]
-            endY = v[1][1]
+            walls[(orientation,n)] = [start]
 
-            if startX == endX:
-                for i in range(endY - startY + 1):
-                    wall[k].append((startX, startY + i))
-            elif startY == startY:
-                for i in range(endX - startX + 1):
-                    wall[k].append((startX + i, startY))
+            if orientation == 0: #horizontal
+                end = (start[0] + length, start[1])
+                for _ in range(end[0] - start[0] + 1):
+                    walls[(orientation,n)].append((start[0] + _,start[1]))
 
-        return wall
+            if orientation == 1: #vertial
+                end = (start[0], start[1] + length)
+                for _ in range(end[1] - start[1] + 1):
+                    walls[(orientation,n)].append((start[0], start[1] + _))
+
+        return walls
             
     def create_knives(num,limit,walls):
         '''
@@ -58,3 +50,4 @@ class World(): #finished
             #creates a tuble of (x,y) location
 
         return knife_loc
+# %%
