@@ -19,4 +19,8 @@ walls formatting:
 items formatting:
     [(item1),(item2)...]
 
+walls:
+    walls have a x% chance of changing, meaning that they randomly regenerate
+    if the walls regenerate and fall on top of a human, they instantly die
+    
 

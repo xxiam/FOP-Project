@@ -19,7 +19,7 @@ class World():
         
         if orientation == 1: #vertical wall
             for _ in range(length):
-                wallFill.append((start[0] + start[1] + _))
+                wallFill.append((start[0], start[1] + _))
 
         return orientation,wallFill
 
@@ -30,9 +30,9 @@ class World():
         if randomPos in walls:
             repeat = True
 
-        while repeat == True:
-            randomPos = (random.randint(1,limits[0]),random.randint(1,limits[1]))
-            if randomPos not in walls:
-                break
+            while repeat == True:
+                randomPos = (random.randint(1,limits[0]),random.randint(1,limits[1]))
+                if randomPos not in walls:
+                    break
         
         return randomPos

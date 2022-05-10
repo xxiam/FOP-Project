@@ -115,7 +115,7 @@ class Movement():
                                         waypoint = (v[0][0] + 1, v[0][1] - 1)
                                     if self.x < v[0][0]:
                                         waypoint = (v[0][0] - 1, v[0][1] - 1)
-                                wallEdge = v[0]
+                                wallEdge = v[0] 
                 else:
                     pass                    
 
