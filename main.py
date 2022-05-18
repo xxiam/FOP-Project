@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 HEIGHT = 50
 LENGTH = 100
 WALLCOUNT = 5
-NUMOBJ = 5
-PLAYERNAMES = ["Jhon","Nic","Jayden","Josh","Dylan","Christian"] 
+PLAYERNAMES = ["Jhon","Nic","Jayden","Josh","Dylan","Christian"]
+HUNTCHANCE = 0.10
+SLEEPCHANCE = 0.10
 # -------------------------------------------------------------
 
 GAMEAREA = (LENGTH - 20, HEIGHT)
@@ -51,7 +52,7 @@ def plot_hunter(hunter):
     plt.scatter(hunter.x,hunter.y,50,"red","s")
 
 def main():
-    hunt = []
+    hunt = False
     rawWalls = []
     playerList = []
     wolf = Wolf(WORLDLIMITS)
@@ -86,11 +87,13 @@ def main():
         if hunt is not True:
             for h in playerList:
                 try:
+                    waypointList = Movement.createWaypoint(player,wallList,WORLDLIMITS,SAFE)
+
                     h.runSafe()
                 except:
                     return
                     
-        if round(random.random(),2) < 0.10: #10% chance
+        if round(random.random(),2) < HUNTCHANCE: #10% chance
             hunt = True
             
         if hunt:
@@ -105,7 +108,7 @@ def main():
                 playerList.remove(targetObject)
                 targetObject.alive = False
 
-            if round(random.random(),2) < 0.10: #10% chance of going back to sleep
+            if round(random.random(),2) < SLEEPCHANCE: #72% chance of going back to sleep
                 hunt = False
         #checks if all the players are safe
         safeCount = 0
