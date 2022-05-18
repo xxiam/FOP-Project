@@ -33,20 +33,23 @@ class Human():
             pass 
     
         ### movement code ### do not douch ###
-        if self.x > waypoint[0]:
-            self.x -= self.speed
-        if self.x < waypoint[0]:
-            self.x += self.speed
-        if self.y > waypoint[1]:
-            self.y -= self.speed
-        if self.y < waypoint[1]:
-            self.y += self.speed
+        try:
+            if self.x > waypoint[0]:
+                self.x -= self.speed
+            if self.x < waypoint[0]:
+                self.x += self.speed
+            if self.y > waypoint[1]:
+                self.y -= self.speed
+            if self.y < waypoint[1]:
+                self.y += self.speed
+        except UnboundLocalError:
+            raise PlayerSafeZone(f"{self.name} has won the game for all players! players win!")
 
         self.prevMoves.append((self.x,self.y))
 
     def runaway(self):
         try:
-            waypoint = self.prevMoves[-1]
+            waypoint = self.prevMoves.pop()
         except IndexError:
             pass
         if self.safe is False:
@@ -62,8 +65,6 @@ class Human():
             except UnboundLocalError:
                 self.safe = True #there is nowhere for the player to move therefore raising the error
 
-        if (self.x,self.y) == waypoint:
-            self.prevMoves.remove(self.waypointList[-1])
 
 class Wolf():
 
@@ -122,3 +123,9 @@ class Wolf():
                 self.y += distance
         
         return closestPlayer
+
+class PlayerSafeZone(Exception):
+    pass
+'''
+if a player reaches the safe zone, all players win
+'''

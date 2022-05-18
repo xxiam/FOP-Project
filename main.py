@@ -85,30 +85,42 @@ def main():
 
         if hunt is not True:
             for h in playerList:
-                h.runSafe()
-
+                try:
+                    h.runSafe()
+                except:
+                    return
+                    
         if round(random.random(),2) < 0.10: #10% chance
             hunt = True
             
         if hunt:
-            targetObject = wolf.hunt(playerList)
             plt.title("The hunt begins! The wolf has now awakened!")
 
             for h in playerList:
                 h.runaway()
+                                                        #players must run away first before wolf moves in order for hitreg to work
+            targetObject = wolf.hunt(playerList)
 
             if (wolf.x,wolf.y) == (targetObject.x,targetObject.y):
                 playerList.remove(targetObject)
                 targetObject.alive = False
 
+            if round(random.random(),2) < 0.10: #10% chance of going back to sleep
+                hunt = False
+        #checks if all the players are safe
+        safeCount = 0
+        for h in playerList:
+            if h.safe == True:
+                safeCount += 1
+                
+                if safeCount == len(playerList):
+                    print("All players ran away, wolf wins!")
+                    return
         # matplotlib code -- do not change --
         plt.xlim(0,LENGTH)
         plt.ylim(0,HEIGHT)
         plt.pause(0.5)
         plt.clf()
-
-
-    
 
 if __name__ == "__main__":
     main()
