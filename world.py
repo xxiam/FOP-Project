@@ -29,25 +29,6 @@ class Worldbuilding():
             
         return wallList
         
-
-    def create_objective(num,limits, walls):
-        '''
-        limits: confines objective inside simulation limits
-        walls: avoids spawning inside walls (should be passed in as a single list with tuples of wall locations)
-        '''
-        objectivePos = []
-
-        for _ in range(num):
-            randomPos = (random.randint(1,limits[0]),random.randint(1,limits[1]))
-            if randomPos in walls:
-                objective = (randomPos[0] + 1, randomPos[1] + 1) # move diagonally
-            else:
-                objective = randomPos
-            objectivePos.append(objective)
-
-        return objectivePos
-        
-        
 class Counter(): #this will count how many times a function has been called
     def __init__(self, func):
         self.func = func

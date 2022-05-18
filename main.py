@@ -1,6 +1,7 @@
 
 from world import *
 from characters import *
+import random
 import matplotlib.pyplot as plt
 
 # these variables are able to change without affecting the code
@@ -33,17 +34,6 @@ def plot_walls(walls):
     
     plt.scatter(xPlot,yPlot,20,"black","s")
 
-def plot_objectives(objectives):
-    
-    xPlot = []
-    yPlot = []
-
-    for x,y in objectives:
-        xPlot.append(x)
-        yPlot.append(y)
-
-    plt.scatter(xPlot,yPlot,20,"green")
-
 def plot_humans(humans):
 
     xPlot = []
@@ -56,12 +46,15 @@ def plot_humans(humans):
         plt.annotate(h.name,(h.x,h.y))
     plt.scatter(xPlot,yPlot,20,cPlot)
     
+def plot_hunter(hunter):
     
+    plt.scatter(hunter.x,hunter.y,50,"red","s")
 
 def main():
+    hunt = []
     rawWalls = []
     playerList = []
-
+    wolf = Wolf(WORLDLIMITS)
     wallList = Worldbuilding.create_wall(WALLCOUNT,int(0.8*GAMEAREA[1]),GAMEAREA,WALLSPACING)
 
     for n in PLAYERNAMES:
@@ -75,17 +68,38 @@ def main():
         waypointList = Movement.createWaypoint(player,wallList,WORLDLIMITS,SAFE)
         player.waypointList = waypointList
 
+        if len(playerList) == 0:
+            print("All players have now been killed by the wolf!")
+            return
+
     while True:
+
         os.system('cls')
-        print('-------------')
+        
+        if hunt is not True:
+            plt.title(f"The wolf is sleeping...")
+
         plot_walls(wallList)
         plot_humans(playerList)
-        
-        for h in playerList:
-            h.runSafe()
+        plot_hunter(wolf)
 
-            print(f"len of waypointlist {len(waypointList)}")
-            print(f"{h.name} waypointList: {h.waypointList}")
+        if hunt is not True:
+            for h in playerList:
+                h.runSafe()
+
+        if round(random.random(),2) < 0.10: #10% chance
+            hunt = True
+            
+        if hunt:
+            targetObject = wolf.hunt(playerList)
+            plt.title("The hunt begins! The wolf has now awakened!")
+
+            for h in playerList:
+                h.runaway()
+
+            if (wolf.x,wolf.y) == (targetObject.x,targetObject.y):
+                playerList.remove(targetObject)
+                targetObject.alive = False
 
         # matplotlib code -- do not change --
         plt.xlim(0,LENGTH)

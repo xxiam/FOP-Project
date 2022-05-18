@@ -3,6 +3,7 @@
     wolves have a significantly higher movement speed than humans, they can also jump over walls
 '''
 import random
+import math
 from movement import *
 import os
 
@@ -22,7 +23,6 @@ class Human():
         '''
         safe : other side of the map
         walls : walls to avoid
-        objectives : powerups to jump over walls
         limits : humans can fall off the map
         '''
         try:
@@ -49,15 +49,18 @@ class Human():
             waypoint = self.prevMoves[-1]
         except IndexError:
             pass
-        
-        if self.x > waypoint[0]:
-            self.x -= self.speed
-        if self.x < waypoint[0]:
-            self.x += self.speed
-        if self.y > waypoint[1]:
-            self.y -= self.speed
-        if self.y < waypoint[1]:
-            self.y += self.speed
+        if self.safe is False:
+            try:
+                if self.x > waypoint[0]:
+                    self.x -= self.speed
+                if self.x < waypoint[0]:
+                    self.x += self.speed
+                if self.y > waypoint[1]:
+                    self.y -= self.speed
+                if self.y < waypoint[1]:
+                    self.y += self.speed
+            except UnboundLocalError:
+                self.safe = True #there is nowhere for the player to move therefore raising the error
 
         if (self.x,self.y) == waypoint:
             self.prevMoves.remove(self.waypointList[-1])
@@ -78,3 +81,44 @@ class Wolf():
 
         for players in humans:
             humanPos.append((players.x,players.y))
+
+        hypdiff = []
+        for x,y in humanPos:
+            xdiff = self.x - x
+            ydiff = self.y - y
+
+            if xdiff < 0:
+                xdiff *= -1
+            if ydiff < 0:
+                ydiff *= -1
+
+            hypdiff.append(math.hypot(xdiff,ydiff))
+
+        closestPlayer = humans[hypdiff.index(min(hypdiff))]
+
+        ##movement code
+        distance = closestPlayer.x - self.x
+        if distance < 0:
+            distance *= -1
+
+        if distance > 5: 
+            if self.x > closestPlayer.x:
+                self.x -= self.speed
+            if self.x < closestPlayer.x:
+                self.x += self.speed
+            if self.y > closestPlayer.y:
+                self.y -= self.speed
+            if self.y < closestPlayer.y:
+                self.y += self.speed
+
+        if distance < 5:
+            if self.x > closestPlayer.x:
+                self.x -= distance
+            if self.x < closestPlayer.x:
+                self.x += distance
+            if self.y > closestPlayer.y:
+                self.y -= distance
+            if self.y < closestPlayer.y:
+                self.y += distance
+        
+        return closestPlayer

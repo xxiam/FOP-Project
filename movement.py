@@ -37,6 +37,27 @@ class Movement():
             hypdiff.append(temp)
 
         for i in range(len(walls)):
-            waypointList.append(wallGap[i][hypdiff[i].index(min(hypdiff[i]))])
-
+            x,y = wallGap[i][hypdiff[i].index(min(hypdiff[i]))]
+            waypointList.append((x-1,y))
+            waypointList.append((x,y))
+            
         return waypointList
+
+    def hunt(self,target):
+        #passing target as lsit of player objects
+
+        #unpack player positions
+        targetPositions = []
+        for player in target:
+            targetPositions.append((player.x,player.y))
+        
+        hypdiff = []
+        for x,y in targetPositions:
+            xdiff = self.x - x
+            ydiff = self.y - y
+            if xdiff < 0: 
+                xdiff *= -1
+            if ydiff < 0:
+                ydiff *= -1
+            
+            hypdiff.append(math.hypot(xdiff,ydiff))
