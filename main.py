@@ -11,6 +11,7 @@ WALLCOUNT = 5
 PLAYERNAMES = ["Jhon","Nic","Jayden","Josh","Dylan","Christian"]
 HUNTCHANCE = 0.10
 SLEEPCHANCE = 0.10
+HEADSTART = 10 
 # -------------------------------------------------------------
 
 GAMEAREA = (LENGTH - 20, HEIGHT)
@@ -45,13 +46,17 @@ def plot_humans(humans):
         yPlot.append(h.y)
         cPlot = list(range(len(humans)))
         plt.annotate(h.name,(h.x,h.y))
-    plt.scatter(xPlot,yPlot,20,cPlot)
+    try:
+        plt.scatter(xPlot,yPlot,20,cPlot)
+    except UnboundLocalError:
+        pass
     
 def plot_hunter(hunter):
     
     plt.scatter(hunter.x,hunter.y,50,"red","s")
 
 def main():
+    headstartCounter = HEADSTART
     hunt = False
     rawWalls = []
     playerList = []
@@ -92,10 +97,10 @@ def main():
                     h.runSafe()
                 except:
                     return
-                    
-        if round(random.random(),2) < HUNTCHANCE: #10% chance
-            hunt = True
-            
+        if headstartCounter == 0:     
+            if round(random.random(),2) < HUNTCHANCE: #10% chance
+                hunt = True
+        
         if hunt:
             plt.title("The hunt begins! The wolf has now awakened!")
 
@@ -124,6 +129,10 @@ def main():
         plt.ylim(0,HEIGHT)
         plt.pause(0.5)
         plt.clf()
+
+        if headstartCounter > 0:
+            headstartCounter -= 1
+        
 
 if __name__ == "__main__":
     main()
