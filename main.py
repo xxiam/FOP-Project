@@ -1,19 +1,48 @@
-
+import sys
+import os #for debugging
 from world import *
 from characters import *
 import random
 import matplotlib.pyplot as plt
 
-# these variables are able to change without affecting the code
-HEIGHT = 50
-LENGTH = 100
-WALLCOUNT = 5
-PLAYERNAMES = ["Jhon","Nic","Jayden","Josh","Dylan","Christian"]
-HUNTCHANCE = 0.10
-SLEEPCHANCE = 0.10
-HEADSTART = 10 
-# -------------------------------------------------------------
+rickroll = False
 
+# these variables are able to change without affecting the code, or you can use command line arguments
+valueDict = {
+    'height' : 50,
+    'length' : 100,
+    'wallcount' : 5,
+    'playernames' : ['Jhon','Nic','Jayden','Josh','Dylan','Christian'],
+    'huntchance' : 0.10,
+    'sleepchance' : 0.10,
+    'headstart' : 10,
+    'wolfspawnx' : None,
+    'wolfspawny' : None
+}
+# -----------------[command line arguments]----------------------------------------
+args = {}
+if len(sys.argv) > 1:
+    for args in sys.argv:
+        if args == 'main.py':
+            pass
+        else:
+            try:
+                key,val = args.split('=')
+                valueDict[key] = int(val)
+            except TypeError:
+                print('Error: invalid integer')
+
+HEIGHT = valueDict['height']
+LENGTH = valueDict['length']
+WALLCOUNT = valueDict['wallcount']
+PLAYERNAMES = valueDict['playernames']
+HUNTCHANCE = valueDict['huntchance']
+SLEEPCHANCE = valueDict['sleepchance']
+HEADSTART = valueDict['headstart']
+WOLFSPAWNX = valueDict['wolfspawnx']
+WOLFSPAWNY = valueDict['wolfspawny']
+
+#
 GAMEAREA = (LENGTH - 20, HEIGHT)
 WALLSPACING = int(GAMEAREA[0]/WALLCOUNT)
 WORLDLIMITS = (LENGTH,HEIGHT)
@@ -50,17 +79,20 @@ def plot_humans(humans):
         plt.scatter(xPlot,yPlot,20,cPlot)
     except UnboundLocalError:
         pass
-    
 def plot_hunter(hunter):
     
     plt.scatter(hunter.x,hunter.y,50,"red","s")
 
 def main():
+    if rickroll:
+        os.system("start https://www.youtube.com/watch?v=dQw4w9WgXcQ")
     headstartCounter = HEADSTART
+    wolfSpawnX = WOLFSPAWNX
+    wolfSpawnY = WOLFSPAWNY
     hunt = False
     rawWalls = []
     playerList = []
-    wolf = Wolf(WORLDLIMITS)
+    wolf = Wolf(WORLDLIMITS,wolfSpawnX,wolfSpawnY)
     wallList = Worldbuilding.create_wall(WALLCOUNT,int(0.8*GAMEAREA[1]),GAMEAREA,WALLSPACING)
 
     for n in PLAYERNAMES:
@@ -78,10 +110,7 @@ def main():
             print("All players have now been killed by the wolf!")
             return
 
-    while True:
-
-        os.system('cls')
-        
+    while True:        
         if hunt is not True:
             plt.title(f"The wolf is sleeping...")
 
@@ -92,10 +121,8 @@ def main():
         if hunt is not True:
             for h in playerList:
                 try:
-                    waypointList = Movement.createWaypoint(player,wallList,WORLDLIMITS,SAFE)
-
                     h.runSafe()
-                except:
+                except: #catch error if there are no possible moves
                     return
         if headstartCounter == 0:     
             if round(random.random(),2) < HUNTCHANCE: #10% chance
@@ -105,9 +132,14 @@ def main():
             plt.title("The hunt begins! The wolf has now awakened!")
 
             for h in playerList:
-                h.runaway()
-                                                        #players must run away first before wolf moves in order for hitreg to work
-            targetObject = wolf.hunt(playerList)
+                if h.x > GAMEAREA[0]/2:
+                    h.runaway()
+                else:
+                    h.runSafe()
+#players must run away first before wolf moves in order for hitreg to work
+            if len(playerList) > 0:
+                targetObject = wolf.hunt(playerList)
+
 
             if (wolf.x,wolf.y) == (targetObject.x,targetObject.y):
                 playerList.remove(targetObject)
@@ -133,6 +165,5 @@ def main():
         if headstartCounter > 0:
             headstartCounter -= 1
         
-
 if __name__ == "__main__":
     main()

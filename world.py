@@ -28,12 +28,3 @@ class Worldbuilding():
             wallList.append(temp)
             
         return wallList
-        
-class Counter(): #this will count how many times a function has been called
-    def __init__(self, func):
-        self.func = func
-        self.counter = 0
-
-    def __call__(self,*args,**kwargs):
-        self.counter += 1
-        return self.func(*args,**kwargs)

@@ -5,12 +5,11 @@
 import random
 import math
 from movement import *
-import os
 
 class Human():
     def __init__(self,limits,name):
         self.name = name
-        self.x = limits[0] - 5
+        self.x = limits[0]
         self.y = random.randint(1,limits[1])
         self.speed = 1
         self.waypointList = None
@@ -65,12 +64,18 @@ class Human():
             except UnboundLocalError:
                 self.safe = True #there is nowhere for the player to move therefore raising the error
 
-
 class Wolf():
 
-    def __init__(self,limits):
-        self.x = 5
-        self.y = int(limits[1])/2
+    def __init__(self,limits,xSpawn = 5,ySpawn = 25):
+        
+        if xSpawn is None:
+            self.x = 5
+        elif ySpawn is None:
+            self.y = int(limits[1]/2)
+        else:
+            self.x = xSpawn
+            self.y = ySpawn
+            
         self.speed = 5
 
     def hunt(self,humans):
@@ -94,8 +99,10 @@ class Wolf():
                 ydiff *= -1
 
             hypdiff.append(math.hypot(xdiff,ydiff))
-
-        closestPlayer = humans[hypdiff.index(min(hypdiff))]
+        try:
+            closestPlayer = humans[hypdiff.index(min(hypdiff))]
+        except ValueError:
+            raise NoActivePlayers("All players have been killed by the wolf! Wolf wins!")
 
         ##movement code
         distance = closestPlayer.x - self.x
@@ -128,4 +135,10 @@ class PlayerSafeZone(Exception):
     pass
 '''
 if a player reaches the safe zone, all players win
+'''
+
+class NoActivePlayers(Exception):
+    pass
+'''
+raises error if there are no more players
 '''

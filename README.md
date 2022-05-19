@@ -1,3 +1,2 @@
 # FOP-Project
-idk?
-its just a project for fop
+a finished (unfinished) python simulation project
