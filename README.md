@@ -1,17 +1,21 @@
 # FOP-Project
 A variant of "Whats the time, Mr. Wolf", a simulation of humans (players) and a wolf object running away or running past the wolf in order to win.
 
-Files:
-    - main.py : main file handling most variables and plotting in pyplot
-    - characters.py : class files for both players and wolf objects and respective movement methods
-    - movement.py : class file for players using a waypoint system in order to traverse through the simulation
-    - world.py : class file for worldbuilding, randomly generated walls at specified intervals
+Inside the folder:
 
-Dependancies:
-    - os : used for debugging, usually used for os.system("sleep") methods in order to access variables during the running of simulations
-    - random : used for randomly generating walls
-    - sys : used for command line arguments to change any values in the simulation
-    - math : mainly using math.hypot() to calculate the shortest path for players to follow
+    Files:
+        - main.py : main file handling most variables and plotting in pyplot
+        - characters.py : class files for both players and wolf objects and respective movement methods
+        - movement.py : class file for players using a waypoint system in order to traverse through the simulation
+        - world.py : class file for worldbuilding, randomly generated walls at specified intervals
+
+Modules used:
+
+    Dependancies:
+        - os : used for debugging, usually used for os.system("sleep") methods in order to access variables during the running of simulations
+        - random : used for randomly generating walls
+        - sys : used for command line arguments to change any values in the simulation
+        - math : mainly using math.hypot() to calculate the shortest path for players to follow
 
 Information to run the program:
     
