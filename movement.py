@@ -40,7 +40,16 @@ class Movement():
             x,y = wallGap[i][hypdiff[i].index(min(hypdiff[i]))]
             waypointList.append((x-1,y))
             waypointList.append((x,y))
-            
+
+#experimental
+
+        deleteWaypoints = []
+        for x,y in waypointList:
+            if self.x <= x:
+                deleteWaypoints.append((x,y))
+        for i in deleteWaypoints:
+            waypointList.remove(i)
+
         return waypointList
 
     def hunt(self,target):

@@ -66,16 +66,11 @@ class Human():
 
 class Wolf():
 
-    def __init__(self,limits,xSpawn = 5,ySpawn = 25):
+    def __init__(self,limits,xSpawn,ySpawn):
         
-        if xSpawn is None:
-            self.x = 5
-        elif ySpawn is None:
-            self.y = int(limits[1]/2)
-        else:
-            self.x = xSpawn
-            self.y = ySpawn
-            
+        self.x = xSpawn
+        self.y = ySpawn
+        
         self.speed = 5
 
     def hunt(self,humans):

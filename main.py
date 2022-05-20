@@ -20,18 +20,18 @@ valueDict = {
     'wolfspawny' : None
 }
 # -----------------[command line arguments]----------------------------------------
-args = {}
+
 if len(sys.argv) > 1:
     for args in sys.argv:
         if args == 'main.py':
             pass
         else:
+            key,val = args.split('=')
             try:
-                key,val = args.split('=')
                 valueDict[key] = int(val)
-            except TypeError:
+            except ValueError:
                 print('Error: invalid integer')
-
+#------------------------------------------------------------------------------------
 HEIGHT = valueDict['height']
 LENGTH = valueDict['length']
 WALLCOUNT = valueDict['wallcount']
@@ -42,6 +42,10 @@ HEADSTART = valueDict['headstart']
 WOLFSPAWNX = valueDict['wolfspawnx']
 WOLFSPAWNY = valueDict['wolfspawny']
 
+if WOLFSPAWNY is None:
+    WOLFSPAWNY = int(HEIGHT/2)
+if WOLFSPAWNX is None:
+    WOLFSPAWNX = 5
 #
 GAMEAREA = (LENGTH - 20, HEIGHT)
 WALLSPACING = int(GAMEAREA[0]/WALLCOUNT)
@@ -53,15 +57,10 @@ def plot_walls(walls):
     xPlot = []
     yPlot = []
     
-    rawWalls = []
-
     for w in walls:
-        for i in w:
-            rawWalls.append(i)
-
-    for x,y in rawWalls:
-        xPlot.append(x)
-        yPlot.append(y)
+        for x,y in w:
+            xPlot.append(x)
+            yPlot.append(y)
     
     plt.scatter(xPlot,yPlot,20,"black","s")
 
@@ -79,8 +78,8 @@ def plot_humans(humans):
         plt.scatter(xPlot,yPlot,20,cPlot)
     except UnboundLocalError:
         pass
-def plot_hunter(hunter):
     
+def plot_hunter(hunter):
     plt.scatter(hunter.x,hunter.y,50,"red","s")
 
 def main():
@@ -109,7 +108,7 @@ def main():
         if len(playerList) == 0:
             print("All players have now been killed by the wolf!")
             return
-
+    
     while True:        
         if hunt is not True:
             plt.title(f"The wolf is sleeping...")
@@ -135,6 +134,7 @@ def main():
                 if h.x > GAMEAREA[0]/2:
                     h.runaway()
                 else:
+                    h.waypointList = Movement.createWaypoint(h,wallList,WORLDLIMITS,SAFE)
                     h.runSafe()
 #players must run away first before wolf moves in order for hitreg to work
             if len(playerList) > 0:
@@ -142,10 +142,14 @@ def main():
 
 
             if (wolf.x,wolf.y) == (targetObject.x,targetObject.y):
-                playerList.remove(targetObject)
-                targetObject.alive = False
+                try:
+                    playerList.remove(targetObject)
+                    targetObject.alive = False
+                except ValueError:
+                    print("All players are dead, Wolf wins!")
+                    return
 
-            if round(random.random(),2) < SLEEPCHANCE: #72% chance of going back to sleep
+            if round(random.random(),2) < SLEEPCHANCE: 
                 hunt = False
         #checks if all the players are safe
         safeCount = 0
