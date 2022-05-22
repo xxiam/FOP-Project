@@ -12,7 +12,7 @@ valueDict = {
     'height' : 50,
     'length' : 100,
     'wallcount' : 5,
-    'playernames' : ['Jhon','Nic','Jayden','Josh','Dylan','Christian'],
+    'playernames' : ['Jhon','Nic','Jayden','Josh','Dylan','Christian','Kelly'],
     'huntchance' : 0.10,
     'sleepchance' : 0.10,
     'headstart' : 10,
@@ -20,7 +20,6 @@ valueDict = {
     'wolfspawny' : None
 }
 # -----------------[command line arguments]----------------------------------------
-
 if len(sys.argv) > 1:
     for args in sys.argv:
         if args == 'main.py':
@@ -30,7 +29,10 @@ if len(sys.argv) > 1:
             try:
                 valueDict[key] = int(val)
             except ValueError:
-                print('Error: invalid integer')
+                try:
+                    valueDict[key] = float(val)
+                except ValueError:
+                    print("Error: invalid format, using default values")
 #------------------------------------------------------------------------------------
 HEIGHT = valueDict['height']
 LENGTH = valueDict['length']
@@ -50,7 +52,7 @@ if WOLFSPAWNX is None:
 GAMEAREA = (LENGTH - 20, HEIGHT)
 WALLSPACING = int(GAMEAREA[0]/WALLCOUNT)
 WORLDLIMITS = (LENGTH,HEIGHT)
-SAFE = (10,HEIGHT/2)
+SAFE = (5,HEIGHT/2)
 
 def plot_walls(walls):
     
@@ -83,91 +85,102 @@ def plot_hunter(hunter):
     plt.scatter(hunter.x,hunter.y,50,"red","s")
 
 def main():
-    if rickroll:
-        os.system("start https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-    headstartCounter = HEADSTART
-    wolfSpawnX = WOLFSPAWNX
-    wolfSpawnY = WOLFSPAWNY
-    hunt = False
-    rawWalls = []
-    playerList = []
-    wolf = Wolf(WORLDLIMITS,wolfSpawnX,wolfSpawnY)
-    wallList = Worldbuilding.create_wall(WALLCOUNT,int(0.8*GAMEAREA[1]),GAMEAREA,WALLSPACING)
+    try:
+        if rickroll: #this is a joke
+            os.system("start https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
-    for n in PLAYERNAMES:
-        playerList.append(Human((LENGTH,HEIGHT),n))
+        headstartCounter = HEADSTART
+        wolfSpawnX = WOLFSPAWNX
+        wolfSpawnY = WOLFSPAWNY
+        hunt = False
+        rawWalls = []
+        playerList = []
+        wolf = Wolf(WORLDLIMITS,wolfSpawnX,wolfSpawnY)
+        wallList = Worldbuilding.create_wall(WALLCOUNT,int(0.8*GAMEAREA[1]),GAMEAREA,WALLSPACING)
 
-    for x in wallList:
-        for i in x:
-            rawWalls.append(i)
+        for n in PLAYERNAMES:
+            playerList.append(Human((LENGTH,HEIGHT),n))
 
-    for player in playerList:
-        waypointList = Movement.createWaypoint(player,wallList,WORLDLIMITS,SAFE)
-        player.waypointList = waypointList
+        for x in wallList:
+            for i in x:
+                rawWalls.append(i)
 
-        if len(playerList) == 0:
-            print("All players have now been killed by the wolf!")
-            return
-    
-    while True:        
-        if hunt is not True:
-            plt.title(f"The wolf is sleeping...")
+        for player in playerList:
+            waypointList = Movement.createWaypoint(player,wallList,WORLDLIMITS,SAFE)
+            player.waypointList = waypointList
 
-        plot_walls(wallList)
-        plot_humans(playerList)
-        plot_hunter(wolf)
-
-        if hunt is not True:
-            for h in playerList:
-                try:
-                    h.runSafe()
-                except: #catch error if there are no possible moves
-                    return
-        if headstartCounter == 0:     
-            if round(random.random(),2) < HUNTCHANCE: #10% chance
-                hunt = True
+            if len(playerList) == 0:
+                print("All players have now been killed by the wolf!")
+                return
         
-        if hunt:
-            plt.title("The hunt begins! The wolf has now awakened!")
+        while True:        
 
+            plot_walls(wallList)
+            plot_humans(playerList)
+            plot_hunter(wolf)
+
+            if hunt is not True:
+                plt.title(f"The wolf is sleeping...")
+
+                for h in playerList:
+                    try:
+                        h.runSafe()
+                    except PlayerSafeZone as e:
+                        print(e)
+                        return
+
+            if headstartCounter == 0:     
+                if round(random.random(),2) < HUNTCHANCE: #10% chance
+                    hunt = True
+            
+            if hunt:
+                if round(random.random(),2) < SLEEPCHANCE: 
+                    hunt = False
+
+                plt.title("The hunt begins! The wolf has now awakened!")
+
+                for h in playerList:
+                    if h.x > GAMEAREA[0]/2:
+                        h.runaway()
+                    else:
+                        h.waypointList = Movement.createWaypoint(h,wallList,WORLDLIMITS,SAFE)
+                        h.runSafe()
+
+                #players must run away first before wolf moves in order for hitreg to work
+                if len(playerList) > 0:
+                    targetObject = wolf.hunt(playerList)
+
+
+                if (wolf.x,wolf.y) == (targetObject.x,targetObject.y):
+                    try:
+                        playerList.remove(targetObject)
+                        targetObject.alive = False
+                    except ValueError:
+                        print("All players are dead, Wolf wins!")
+                        return
+
+            #checks if all the players are safe
+            runawayCount = 0
             for h in playerList:
-                if h.x > GAMEAREA[0]/2:
-                    h.runaway()
-                else:
-                    h.waypointList = Movement.createWaypoint(h,wallList,WORLDLIMITS,SAFE)
-                    h.runSafe()
-#players must run away first before wolf moves in order for hitreg to work
-            if len(playerList) > 0:
-                targetObject = wolf.hunt(playerList)
+                if h.ranAway == True:
+                    runawayCount += 1
+                    
+                    if runawayCount == len(playerList):
+                        print("All players ran away, wolf wins!")
+                        return
+                        
+            # matplotlib code -- do not change --
+            plt.xlim(0,LENGTH)
+            plt.ylim(0,HEIGHT)
+            plt.pause(0.5)
+            plt.clf()
 
+            if headstartCounter > 0:
+                headstartCounter -= 1
 
-            if (wolf.x,wolf.y) == (targetObject.x,targetObject.y):
-                try:
-                    playerList.remove(targetObject)
-                    targetObject.alive = False
-                except ValueError:
-                    print("All players are dead, Wolf wins!")
-                    return
+    except KeyboardInterrupt:
+        print("Quitting simulation via KeyboardInterrupt")
+        return
 
-            if round(random.random(),2) < SLEEPCHANCE: 
-                hunt = False
-        #checks if all the players are safe
-        safeCount = 0
-        for h in playerList:
-            if h.safe == True:
-                safeCount += 1
-                
-                if safeCount == len(playerList):
-                    print("All players ran away, wolf wins!")
-                    return
-        # matplotlib code -- do not change --
-        plt.xlim(0,LENGTH)
-        plt.ylim(0,HEIGHT)
-        plt.pause(0.5)
-        plt.clf()
-
-        if headstartCounter > 0:
-            headstartCounter -= 1
-        
 if __name__ == "__main__":
     main()

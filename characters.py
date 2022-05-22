@@ -15,8 +15,9 @@ class Human():
         self.waypointList = None
         self.waypoint = (None,None)
         self.alive = True
-        self.safe = False
+        self.ranAway = False
         self.prevMoves = []
+
     def runSafe(self):
         
         '''
@@ -28,8 +29,8 @@ class Human():
             waypoint = self.waypointList[-1]
             if (self.x,self.y) == waypoint:
                 self.waypointList.remove(self.waypointList[-1])
-        except IndexError:
-            pass 
+        except IndexError: 
+            pass #allows the player to reach the safe zone without causing an error
     
         ### movement code ### do not douch ###
         try:
@@ -51,7 +52,7 @@ class Human():
             waypoint = self.prevMoves.pop()
         except IndexError:
             pass
-        if self.safe is False:
+        if self.ranAway is False:
             try:
                 if self.x > waypoint[0]:
                     self.x -= self.speed
@@ -62,7 +63,7 @@ class Human():
                 if self.y < waypoint[1]:
                     self.y += self.speed
             except UnboundLocalError:
-                self.safe = True #there is nowhere for the player to move therefore raising the error
+                self.ranAway = True #there is nowhere for the player to move therefore raising the error
 
 class Wolf():
 

@@ -9,6 +9,7 @@ class Movement():
         walls - wall positions
         limits - simulation limits
         '''
+
         waypointList = [safe]
         wallGap = []
         for wall in walls:
@@ -41,11 +42,9 @@ class Movement():
             waypointList.append((x-1,y))
             waypointList.append((x,y))
 
-#experimental
-
         deleteWaypoints = []
         for x,y in waypointList:
-            if self.x <= x:
+            if self.x < x:
                 deleteWaypoints.append((x,y))
         for i in deleteWaypoints:
             waypointList.remove(i)
