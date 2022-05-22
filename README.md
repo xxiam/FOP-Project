@@ -31,7 +31,6 @@ Information to run the program:
         - the location of the wolf spawning
     
     All of these can be changed (apart from player count/names) using command line arguments
-            command line arguments for player count/names are still experimental!
 
     Example: /the order of command line argumes do not need to be in order/
     
